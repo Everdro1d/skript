@@ -1,3 +1,4 @@
+# Yes the code is a mess, no I don't yet know enough to make it better, when I do I'll probably rewrite it.
 variables:
 	{totalMins} = -1
 
