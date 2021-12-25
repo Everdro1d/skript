@@ -2,58 +2,77 @@
 
 
 on join:
-	if {onJoin::player::*::*}:
-		if {onJoin::player::%player%::*} is not set:
-			stop
-		else:
-			loop size of {onJoin::player::%player%::*} times
-				set {_cmd} to {onJoin::player::%player%::%loop-value%}
-				make player execute command {_cmd}
-	else:
-		if {onJoin::console::*::*}:
-			if {onJoin::console::%player%::*} is not set:
-				stop
-			else:
-				loop size of {onJoin::console::%player%::*} times
-					set {_cmd} to {onJoin::console::%player%::%loop-value%}
-					make console execute command {_cmd}
-				
+	if {onJoin::player::%player%::*} is set:
+		loop size of {onJoin::player::%player%::*} times:
+			set {_cmd} to {onJoin::player::%player%::%loop-value%}
+			make player execute command {_cmd}
+			make player execute command "/delonjoincommand player %player% %loop-value% -s"
+			
+	if {onJoin::console::%player%::*} is set:
+		loop size of {onJoin::console::%player%::*} times:
+			set {_cmd} to {onJoin::console::%player%::%loop-value%}
+			make console execute command {_cmd}
+			make console execute command "/delonjoincommand console %player% %loop-value% -s"
+			
 # make a command execute on a player join (as console or as player)
 command /executeonjoin <string> <player> <string>:
+	permission: dro1d.op
 	usage: /executeonjoin <player | console> <playerName> <command>
 	trigger:
 		#check if supposed to execute as console
 		if arg-1 is "console":
-			# no player has been selected
-			if arg-2 is not set:
-				send "&cYou have to choose a player to execute the command for!"
-				stop
-			#command has not been entered
-				if arg-3 is not set:
-					send "&cYou havent chosen a command to execute!"
-					stop
-				#command correct
-				else:
-					#add the command for as player
-					set {_size} to size of {onJoin::%arg-1%::%arg-2%::*}
-					add 1 to {_size}
-					set {onJoin::%arg-1%::%arg-2%::%{_size}%} to arg-3
+			#add the command for as player
+			set {_size} to size of {onJoin::%arg-1%::%arg-2%::*}
+			if {_size} is not set:
+				set {_size} to 1
+			add 1 to {_size}
+			set {onJoin::%arg-1%::%arg-2%::%{_size}%} to arg-3
 #---------------------------------PLAYER EXECUTE--------------------------------
 		#else it executes as player
 		else:
-			# no player has been selected
-			if arg-2 is not set:
-				send "&cYou havent chosen a player to execute the command as!"
-				stop
-			#player has been selected
+			#add the command for as player
+			set {_size} to size of {onJoin::%arg-1%::%arg-2%::*}
+			if {_size} is not set:
+				set {_size} to 1
+			add 1 to {_size}
+			set {onJoin::%arg-1%::%arg-2%::%{_size}%} to arg-3
+		send "&6You have successfully queued the command,"
+		send "&e%arg-3%" 
+		send "&6to execute as %arg-1% with number %{_size}%"
+
+command /listonjoincommands <string> <player>:
+	permission: dro1d.op
+	usage: /listonjoincommands <player | console> <playerName>
+	trigger:
+		#loops through all the player's queued commands
+		loop {onJoin::%arg-1%::%arg-2%::*}:
+			#first queued commands gets added to the list
+			if {_listCmds} is not set:
+				set {_listCmds} to "ID: %loop-index% (&e/%loop-value%&6)"
+			#any queued commands after first get added to the list
 			else:
-				#command has not been entered
-				if arg-3 is not set:
-					send "&cYou havent chosen a command to execute!"
-					stop
-				#command correct
-				else:
-					#add the command for as player
-					set {_size} to size of {onJoin::%arg-1%::%arg-2%::*}
-					add 1 to {_size}
-					set {onJoin::%arg-1%::%arg-2%::%{_size}%} to arg-3
+				#
+				set {_listCmds} to "%{_listCmds}%, ID: %loop-index% (&e/%loop-value%&6)"
+		#if the list still has nothing in it after the loop notify the player they have no queued commands
+		if {_listCmds} is not set:
+			send "&cYou have no queued commands!"
+			stop
+		#send the message with the list of queued commands
+		else:
+			send "&6Queued Commands: %{_listCmds}%"
+			
+command /delonjoincommand <string> <player> <integer> [<string>]:
+	permission: dro1d.op
+	usage: /delonjoincommand <player | console> <playerName> <cmdNum>
+	executable by: player
+	trigger:
+		#checks if the queued command exists if so run delete code, else notify the player it doesn't exist
+		if {onJoin::%arg-1%::%arg-2%::%arg-3%} is set:
+			#if '-s' is added at the end of the command it wont send a message
+			if arg-4 is not "-s":
+				send "&6Your queued command, &cID: %arg-3%&6, has been removed."
+			#removes the queued command
+			delete {onJoin::%arg-1%::%arg-2%::%arg-3%}
+		#notify if non existent
+		else:
+			send "&cYou have no queued command by that name!"
