@@ -1,0 +1,59 @@
+#12/25/21 - Queue a command to execute at a later time
+
+
+on join:
+	if {onJoin::player::*::*}:
+		if {onJoin::player::%player%::*} is not set:
+			stop
+		else:
+			loop size of {onJoin::player::%player%::*} times
+				set {_cmd} to {onJoin::player::%player%::%loop-value%}
+				make player execute command {_cmd}
+	else:
+		if {onJoin::console::*::*}:
+			if {onJoin::console::%player%::*} is not set:
+				stop
+			else:
+				loop size of {onJoin::console::%player%::*} times
+					set {_cmd} to {onJoin::console::%player%::%loop-value%}
+					make console execute command {_cmd}
+				
+# make a command execute on a player join (as console or as player)
+command /executeonjoin <string> <player> <string>:
+	usage: /executeonjoin <player | console> <playerName> <command>
+	trigger:
+		#check if supposed to execute as console
+		if arg-1 is "console":
+			# no player has been selected
+			if arg-2 is not set:
+				send "&cYou have to choose a player to execute the command for!"
+				stop
+			#command has not been entered
+				if arg-3 is not set:
+					send "&cYou havent chosen a command to execute!"
+					stop
+				#command correct
+				else:
+					#add the command for as player
+					set {_size} to size of {onJoin::%arg-1%::%arg-2%::*}
+					add 1 to {_size}
+					set {onJoin::%arg-1%::%arg-2%::%{_size}%} to arg-3
+#---------------------------------PLAYER EXECUTE--------------------------------
+		#else it executes as player
+		else:
+			# no player has been selected
+			if arg-2 is not set:
+				send "&cYou havent chosen a player to execute the command as!"
+				stop
+			#player has been selected
+			else:
+				#command has not been entered
+				if arg-3 is not set:
+					send "&cYou havent chosen a command to execute!"
+					stop
+				#command correct
+				else:
+					#add the command for as player
+					set {_size} to size of {onJoin::%arg-1%::%arg-2%::*}
+					add 1 to {_size}
+					set {onJoin::%arg-1%::%arg-2%::%{_size}%} to arg-3
