@@ -1,0 +1,8 @@
+options:
+command /map:
+	trigger:
+		send "&e-----------------" to player
+		send "&6 Check out the map!" to player
+		send "" to player
+		send "&b - Live Map: <link:http://bsi.mc-srv.com:8888/>&nClick Me!" to player
+		send "&e-----------------" to player

@@ -1,0 +1,21 @@
+options:
+	
+
+command /xrayban <player>:
+	permission: dro1d.ban
+	permission message: &cNo Perms.
+	trigger:
+		execute console command "/clear %arg 1%"
+		execute console command "/tempban %arg 1% 12h &6Don't X-Ray"
+		
+command /languagetempban <player>:
+	permission: dro1d.ban
+	permission message: &cNo Perms.
+	trigger:
+		execute console command "/tempban %arg 1% 1h &6Watch your language."
+
+command /languagepermban <player>:
+	permission: dro1d.ban
+	permission message: &cNo Perms.
+	trigger:
+		execute console command "/ban %arg 1% &6You should have watched your language."

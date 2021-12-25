@@ -1,0 +1,103 @@
+import:
+	org.bukkit.World
+
+variables:
+	{currentDay} = 0
+
+options:
+	world: world-survival
+	blocked_symbols: "(" or ")" or "`" or "~" or "!" or "@" or "##" or "$" or "%%" or "^" or "-" or "+" or "=" or "|" or "\" or "/" or "{" or "}" or "[" or "]" or ":" or ";" or """" or "'" or "<" or ">" or "," or "." or "?" or "&" or "*" or " "
+
+# sends the current day on playerjoin
+on join:
+	wait 1 seconds
+	make player execute command "/getDay"
+
+# grabs the time at dawn
+at 06:00 in "{@world}":
+	set {currentDay} to floor(world("{@world}").getFullTime()/ 24000)
+	loop all players:
+		send "&6A new day has begun, today is day &c%{currentDay}%&r." to loop-player
+		loop {targetDay::%loop-player%::*}:
+			if loop-value-2 is {currentDay}:
+				send "&eYour timer named &c%loop-index%&e, has finished!" to loop-player
+				make loop-player execute command "/deltimer %loop-index% -s"
+
+# Day tracker commands
+command /getDay:
+	description: Shows you the current day
+	executable by: player
+	trigger:
+		send "&6It is currently day, &c%{currentDay}%&r."
+
+command /resetDay:
+	permission: dayCounter.reset
+	description: Set the day tracker to the specified amount
+	executable by: player
+	trigger:
+		set {currentDay} to floor(world("{@world}").getFullTime()/ 24000)
+		send "&6Day has been set to, &c%{currentDay}%&r."
+
+# Day timer
+command /getTargetDay <string>:
+	permission: dayCounter.print
+	usage: /getTargetDay <nameOfTimer>
+	executable by: player
+	trigger:
+		send "&c%{targetDay::%player%::%arg-1%}%"
+
+command /setdaytimer <integer> <string>:
+	description: Sets a countdown for number of days on the specified timer number
+	usage: /setDayTimer <numberOfDays> <nameOfTimer>
+	executable by: player
+	trigger:
+		if arg-1 is 0:
+			send "&c&lError! &r&6Timer cannot be &c0&6!"
+			stop
+		else:
+			if arg-2 contains {@blocked_symbols}:
+				send "&cPlease do not use irregular symbols in timer name."
+				stop
+			loop {targetDay::%player%::*}:
+				if arg-2 is loop-index:
+					send "&cYou already have an active timer by that name! Please use another."
+					stop
+			set {targetDay::%player%::%arg-2%} to {currentDay} + arg-1
+			send "&6Set a timer named &c%arg-2%&6, for &c%arg-1% &6days from now."
+
+command /checkdaytimer <string>:
+	description: Checks how many days are remaining on a timer
+	usage: /checkdaytimer <nameOfTimer>
+	executable by: player
+	trigger:
+		set {_checkDay} to {targetDay::%player%::%arg-1%}-{currentDay}
+		if {_checkDay} < 0:
+			send "&cYou dont have an active timer with that name!"
+			stop
+		if {_checkDay} is 1:
+			send "&6There is &c%{_checkDay}% &6day remaining on your timer."
+			stop
+		send "&6There are &c%{_checkDay}% &6days remaining on your timer."
+
+command /listTimers:
+	executable by: player
+	trigger:
+		loop {targetDay::%player%::*}:
+			if {_listTimers} is not set:
+				set {_listTimers} to loop-index
+			else:
+				set {_listTimers} to "%{_listTimers}%, %loop-index%"
+		if {_listTimers} is not set:
+			send "&cYou have no active timers!"
+			stop
+		else:
+			send "%{_listTimers}%"
+
+command /delTimer <string> [<string>]:
+	usage: /deltimer <nameOfTimer>
+	executable by: player
+	trigger:
+		if {targetDay::%player%::%arg-1%} is set:
+			if arg-2 is not "-s":
+				send "&6Your timer named, &c%arg-1%&6, has been removed."
+			delete {targetDay::%player%::%arg-1%}

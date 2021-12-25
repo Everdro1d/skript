@@ -1,0 +1,64 @@
+
+# kissCounter ----------------------------------------------------------------------
+on command "/marry kiss":
+	add 1 to {counter::%player%::kiss}
+
+
+command /kissCounter [<player>]:
+	trigger:
+		if arg-1 is set:
+			if {counter::%player%::kiss} is set:
+				send "&eThe kiss count of %arg-1% is %{counter::%arg-1%::kiss}% kisses!" to player
+			else:
+				send "&e%arg-1% hasn't kissed anyone yet!"
+			
+		else:
+			
+			if {counter::%player%::kiss} is set:
+				send "&eYour kiss count is %{counter::%player%::kiss}% kisses!" to player
+			else:
+				send "&eYou haven't kissed anyone yet!"
+				chance of 5%:
+					send "haha kissless virgin!"
+			
+# MarriageCounter ------------------------------------------------------------------
+command /playermarried [<player>]:
+	trigger:
+		if arg-1 is set:
+			add 1 to {counter::%arg-1%::marriage}
+		else:
+			add 1 to {counter::%player%::marriage}
+
+command /marriageCounter [<player>]:
+	trigger:
+		if arg-1 is set:
+			if {counter::%arg-1%::marriage} is set:
+				send "&e%arg-1% has been married %{counter::%arg-1%::marriage}% time(s)!" to player
+			else:
+				send "&e%arg-1% hasn't been married yet!"
+		else:
+			if {counter::%player%::marriage} is set:
+				send "&eYou have been married %{counter::%player%::marriage}% time(s)!" to player
+			else:
+				send "&eYou haven't married anyone yet!"
+
+# divorceCounter ------------------------------------------------------------------
+command /playerdivorced [<player>]:
+	trigger:
+		if arg-1 is set:
+			add 1 to {counter::%arg-1%::divorce}
+		else:
+			add 1 to {counter::%player%::divorce}
+
+command /divorceCounter [<player>]:
+	trigger:
+		if arg-1 is set:
+			if {counter::%arg-1%::divorce} is set:
+				send "&e%arg-1% has been divorced %{counter::%arg-1%::divorce}% time(s)!" to player
+			else:
+				send "&e%arg-1% hasn't been divorced yet!"
+		else:
+			if {counter::%player%::divorce} is set:
+				send "&eYou have been divorced %{counter::%player%::divorce}% time(s)!" to player
+			else:
+				send "&eYou haven't divorced anyone yet!"

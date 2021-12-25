@@ -1,0 +1,140 @@
+variables:
+	{totalMins} = -1
+
+options:
+	messageMins: &8[&4RestartWarning&8] &7> &oServer will restart in &c%{totalMins}% minute(s).
+	messageSecs: &8[&4RestartWarning&8] &7> &oServer will restart in &c%{_totalSecs}% second(s).
+
+#if there is an active timer it will count minutes
+every 1 irl minute:
+	if {totalMins} is not -1:
+		remove 1 from {totalMins}
+
+#checks if there is an active timer or not
+command /checkrestart:
+	permission: bukkit.command.restart
+	trigger:
+		if {totalMins} is not -1:
+			send "&eThere is currently a restart scheduled for %{totalMins}% minutes from now."
+		else:
+			send "&cThere is no scheduled restart!"
+
+#cancels any active timer
+command /cancelrestart [<string>]:
+	permission: bukkit.command.restart
+	trigger:
+		set {totalMins} to -1
+		log "%player% has cancelled a scheduled restart."
+		if arg-1 is "-s":
+			log "A scheduled restart has been cancelled silently."
+		else:
+			send "&eRestart has been cancelled."
+
+#sets the restart timer
+command /restartTimer <integer>:
+	permission: bukkit.command.restart
+	usage: /restartTimer <minutes>
+	trigger:
+		set {totalMins} to arg-1										  					 #sets how long the wait time is
+		log "%player% has scheduled a restart for %{totalMins}% minutes from now."
+		send "Server will restart in %{totalMins}% minutes"
+		if {totalMins} is greater than or equal to 30:										 #30 mins total
+			set {_30mins} to {totalMins}
+			remove 30 from {_30mins}
+			wait "%{_30mins}% minutes" parsed as timespan
+			stop if {totalMins} is -1
+			broadcast "{@messageMins}"
+			wait 15 irl minutes
+			stop if {totalMins} is -1
+			broadcast "{@messageMins}"														 #15 minutes remain
+			loop 2 times:
+				wait 5 irl minutes
+				stop if {totalMins} is -1
+				broadcast "{@messageMins}"													 #10,5 minutes remaining
+			wait 4 irl minutes																 #1 minute remaining
+			stop if {totalMins} is -1
+			broadcast "{@messageMins}"
+			wait 50 irl seconds
+			stop if {totalMins} is -1
+			set {_totalSecs} to 10
+			loop 10 times:
+				wait 1 irl seconds
+				stop if {totalMins} is -1
+				broadcast "{@messageSecs}"
+				remove 1 from {_totalSecs}
+
+		else:
+			if {totalMins} is greater than or equal to 15:									 #15 minutes total
+				set {_15mins} to {totalMins}
+				remove 15 from {_15mins}
+				wait "%{_15mins}% minutes" parsed as timespan
+				stop if {totalMins} is -1
+				broadcast "{@messageMins}"
+				loop 2 times:
+					wait 5 irl minutes
+					stop if {totalMins} is -1
+					broadcast "{@messageMins}"												 #10,5 minutes remaining
+				wait 4 irl minutes															 #1 minute remaining
+				stop if {totalMins} is -1
+				broadcast "{@messageMins}"
+				wait 50 irl seconds
+				stop if {totalMins} is -1
+				set {_totalSecs} to 10
+				loop 10 times:
+					wait 1 irl seconds
+					stop if {totalMins} is -1
+					broadcast "{@messageSecs}"
+					remove 1 from {_totalSecs}
+
+			else:
+				if {totalMins} is greater than or equal to 10:								 #10 minutes total
+					set {_10mins} to {totalMins}
+					remove 10 from {_10mins}
+					wait "%{_10mins}% minutes" parsed as timespan
+					stop if {totalMins} is -1
+					broadcast "{@messageMins}"
+					wait 5 irl minutes
+					stop if {totalMins} is -1
+					broadcast "{@messageMins}"												 #5 mins remaining
+					wait 4 irl minutes
+					stop if {totalMins} is -1
+					broadcast "{@messageMins}"												 #1 minute remaining
+					wait 50 irl seconds
+					stop if {totalMins} is -1
+					set {_totalSecs} to 10
+					loop 10 times:
+						wait 1 irl seconds
+						stop if {totalMins} is -1
+						broadcast "{@messageSecs}"
+						remove 1 from {_totalSecs}
+
+				else:
+					if {totalMins} is greater than or equal to 5: 							 # 5 mins total
+						set {_5mins} to {totalMins}
+						remove 5 from {_5mins}
+						wait "%{_5mins}% minutes" parsed as timespan
+						stop if {totalMins} is -1
+						broadcast "{@messageMins}"
+						wait 4 irl minutes													 #1 minute remaining
+						stop if {totalMins} is -1
+						broadcast "{@messageMins}"
+						wait 50 irl seconds
+						stop if {totalMins} is -1
+						set {_totalSecs} to 10
+						loop 10 times:
+							wait 1 irl seconds
+							stop if {totalMins} is -1
+							broadcast "{@messageSecs}"
+							remove 1 from {_totalSecs}										 #10sec countdown
+					else:
+						if {totalMins} is 0:												 #10sec total
+							set {_totalSecs} to 10
+							loop 10 times:
+								wait 1 irl seconds
+								stop if {totalMins} is -1
+								broadcast "{@messageSecs}"
+								remove 1 from {_totalSecs}
+		#trigger
+		send "&8[&4RestartWarning&8] &7> &oServer will restart &cNOW."
+		execute console command "/cancelrestart -s"
+		execute console command "/restart"

@@ -1,0 +1,31 @@
+command /sw [<string>] [<string>] [<string>]
+	description: Like speed-dial for your /homes 
+	usage: /sw < set | del | (num) > [<homeName>] [<number>]
+	trigger:
+		if arg-1 is not set:
+			send "&cPlease enter a valid option! &7| &e< set | del | (num) >"
+			stop
+		else:
+			set {_num} to arg-1 parsed as a number
+			if {_num} is set:
+				set {_tpTo} to arg-1 parsed as integer
+				#do tp stuff
+			else:
+				if arg-1 is "set":
+					#do set stuff
+					if arg-2 is not set:
+						send "&cPlease enter a valid home!"
+						stop
+					loop {sw::%player%::*}:
+						if arg-3 is loop-value:
+							send "&cYou already have a speedWarp associated with that number! Please use another or delete the current one to use this one."
+							stop
+					set {sw::%player%::%arg-3%} to arg-2
+				else:
+					if arg-1 is "del":
+						#do delete stuff
+						if arg-2 is not set:
+							send "&cPlease enter a valid home!"
+							stop
+					else:
+						send "what the heck did you do wrong to see me?"

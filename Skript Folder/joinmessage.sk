@@ -1,0 +1,7 @@
+on join:
+	broadcast "&8[&a+&8] &7%player%"
+	log "&8[&a+&8] &7%player%"
+
+on quit:
+	broadcast "&8[&c-&8] &7%player%"
+	log "&8[&c-&8] &7%player%"

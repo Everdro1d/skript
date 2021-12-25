@@ -1,0 +1,14 @@
+command /playtime [<player>]:
+	usage: /playtime
+	trigger:
+		if arg-1 is not set:
+			set {_playtime} to time played of player
+			set {_prefix} to "You have played for"
+		else:
+			if player has permission "playtime.other":
+				set {_playtime} to time played of arg-1
+				set {_prefix} to "%arg-1% has played for"
+			else:
+				send "&cYou don't have permission to use that!" to player
+		
+		send "&6%{_prefix}% %{_playtime}%."
