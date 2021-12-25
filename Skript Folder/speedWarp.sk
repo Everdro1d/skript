@@ -1,3 +1,4 @@
+# WIP - assign a number to a /home to speed up going there
 command /sw [<string>] [<string>] [<string>]
 	description: Like speed-dial for your /homes 
 	usage: /sw < set | del | (num) > [<homeName>] [<number>]

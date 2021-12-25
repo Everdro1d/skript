@@ -1,3 +1,9 @@
+#made to be used with MarriageMaster plugin
+#keeps track of marriages, divorces and kisses per player
+variables:
+	#enables or disables the 1% chance of "haha kissless virgin!" appearing when runing /kissCounter
+	#disabled by default | change 0 to 1 to enable
+	{taunt} = 0
 
 # kissCounter ----------------------------------------------------------------------
 on command "/marry kiss":
@@ -18,11 +24,12 @@ command /kissCounter [<player>]:
 				send "&eYour kiss count is %{counter::%player%::kiss}% kisses!" to player
 			else:
 				send "&eYou haven't kissed anyone yet!"
-				chance of 5%:
-					send "haha kissless virgin!"
+				if {taunt} is 1:
+					chance of 1%:
+						send "&7haha kissless virgin!"
 			
 # MarriageCounter ------------------------------------------------------------------
-command /playermarried [<player>]:
+command /playermarried [<player>]: #place this command inside of OnMarry:[] in the marriageMaster config file | this command shouldnt be used by players
 	trigger:
 		if arg-1 is set:
 			add 1 to {counter::%arg-1%::marriage}
@@ -43,7 +50,7 @@ command /marriageCounter [<player>]:
 				send "&eYou haven't married anyone yet!"
 
 # divorceCounter ------------------------------------------------------------------
-command /playerdivorced [<player>]:
+command /playerdivorced [<player>]: #place this command inside of OnDivorce:[] in the marriageMaster config file
 	trigger:
 		if arg-1 is set:
 			add 1 to {counter::%arg-1%::divorce}

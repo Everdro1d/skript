@@ -1,3 +1,9 @@
+#dependent on skript-reflect
+#Features:
+#- allows the player to query what day it is 
+#- allows players to set & delete timers for X number of days also allows custom timer names
+#- list the player's active timers
+#- check how long is remaining on an active timer
 import:
 	org.bukkit.World
 
@@ -15,21 +21,27 @@ on join:
 
 # grabs the time at dawn
 at 06:00 in "{@world}":
+	#uses skript relfect to get the world time then divides for days
 	set {currentDay} to floor(world("{@world}").getFullTime()/ 24000)
+	#loops through all players to check timers
 	loop all players:
 		send "&6A new day has begun, today is day &c%{currentDay}%&r." to loop-player
+		#loops through all timers a player has set, then checks if it has finished, if so then it sends a message to the player and removes the timer
 		loop {targetDay::%loop-player%::*}:
 			if loop-value-2 is {currentDay}:
+				#message
 				send "&eYour timer named &c%loop-index%&e, has finished!" to loop-player
+				#removes the timer without sending a message
 				make loop-player execute command "/deltimer %loop-index% -s"
 
-# Day tracker commands
+# Day tracker commands ---------------------
 command /getDay:
 	description: Shows you the current day
 	executable by: player
 	trigger:
 		send "&6It is currently day, &c%{currentDay}%&r."
 
+# admin command incase the day is not displaying correctly
 command /resetDay:
 	permission: dayCounter.reset
 	description: Set the day tracker to the specified amount
@@ -38,7 +50,9 @@ command /resetDay:
 		set {currentDay} to floor(world("{@world}").getFullTime()/ 24000)
 		send "&6Day has been set to, &c%{currentDay}%&r."
 
-# Day timer
+# Day timer --------------------
+#
+# admin debug command
 command /getTargetDay <string>:
 	permission: dayCounter.print
 	usage: /getTargetDay <nameOfTimer>
@@ -46,58 +60,85 @@ command /getTargetDay <string>:
 	trigger:
 		send "&c%{targetDay::%player%::%arg-1%}%"
 
+#command to create a new timer
 command /setdaytimer <integer> <string>:
 	description: Sets a countdown for number of days on the specified timer number
 	usage: /setDayTimer <numberOfDays> <nameOfTimer>
 	executable by: player
 	trigger:
+		#timer cannot be set for 0 days
 		if arg-1 is 0:
 			send "&c&lError! &r&6Timer cannot be &c0&6!"
 			stop
 		else:
+			#timer name contains blocked symbols
 			if arg-2 contains {@blocked_symbols}:
 				send "&cPlease do not use irregular symbols in timer name."
 				stop
+			#loop through a player's active timers
 			loop {targetDay::%player%::*}:
+				#if the player already has a timer by the chosen name then send error message and cancel creation
 				if arg-2 is loop-index:
 					send "&cYou already have an active timer by that name! Please use another."
 					stop
+			#sets the target day for the timer to finish & sends a message notifying the player of successful creation
 			set {targetDay::%player%::%arg-2%} to {currentDay} + arg-1
 			send "&6Set a timer named &c%arg-2%&6, for &c%arg-1% &6days from now."
 
+#checks how many days are remaining on a timer
 command /checkdaytimer <string>:
 	description: Checks how many days are remaining on a timer
 	usage: /checkdaytimer <nameOfTimer>
 	executable by: player
 	trigger:
+		#checks how many days difference there is
 		set {_checkDay} to {targetDay::%player%::%arg-1%}-{currentDay}
+		#if no timer
 		if {_checkDay} < 0:
 			send "&cYou dont have an active timer with that name!"
 			stop
-		if {_checkDay} is 1:
-			send "&6There is &c%{_checkDay}% &6day remaining on your timer."
-			stop
-		send "&6There are &c%{_checkDay}% &6days remaining on your timer."
+		else:
+			#if one day remaining
+			if {_checkDay} is 1:
+				send "&6There is &c%{_checkDay}% &6day remaining on your timer."
+				stop
+			else:
+				#more than one day remaining
+				send "&6There are &c%{_checkDay}% &6days remaining on your timer."
 
+#lists all active timers for the player
 command /listTimers:
 	executable by: player
 	trigger:
+		#loops through all the player's timers
 		loop {targetDay::%player%::*}:
+			#first timer gets added to the list
 			if {_listTimers} is not set:
 				set {_listTimers} to loop-index
+			#any timers after first get added to the list
 			else:
+				#"existingtimer1, (adds the current loop timer here)"
 				set {_listTimers} to "%{_listTimers}%, %loop-index%"
+		#if the list still has nothing in it after the loop notify the player they have no active timers
 		if {_listTimers} is not set:
 			send "&cYou have no active timers!"
 			stop
+		#send the message with the list of timers
 		else:
-			send "%{_listTimers}%"
+			send "&6Active timers: %{_listTimers}%"
 
+#deletes a timer
 command /delTimer <string> [<string>]:
 	usage: /deltimer <nameOfTimer>
 	executable by: player
 	trigger:
+		#checks if the timer exists if so run delete code, else notify the player it doesn't exist
 		if {targetDay::%player%::%arg-1%} is set:
+			#if '-s' is added at the end of the command it wont send a message
 			if arg-2 is not "-s":
 				send "&6Your timer named, &c%arg-1%&6, has been removed."
+			#removes the timer
 			delete {targetDay::%player%::%arg-1%}
+		#notify if non existent
+		else:
+			send "&cYou have no active timer by that name!"

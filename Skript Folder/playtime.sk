@@ -1,14 +1,19 @@
+# gets the playtime of an online player
+# gets it from the player statistics file
 command /playtime [<player>]:
 	usage: /playtime
 	trigger:
+		#get the playtime of the player
 		if arg-1 is not set:
 			set {_playtime} to time played of player
 			set {_prefix} to "You have played for"
 		else:
+			#can the player see the playtime of another player
 			if player has permission "playtime.other":
 				set {_playtime} to time played of arg-1
 				set {_prefix} to "%arg-1% has played for"
 			else:
+				#if not then send permission message
 				send "&cYou don't have permission to use that!" to player
-		
+		#send the message
 		send "&6%{_prefix}% %{_playtime}%."
