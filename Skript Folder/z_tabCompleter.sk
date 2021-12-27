@@ -4,10 +4,10 @@ on tab complete for "/restartTimer":
 
 #playtime Skript Tab Completions
 on tab complete for "/playtime":
-	if player has permission "playtime.other":
-		#allow it
-	else:
+	if player doesn't have permission "playtime.other":
 		clear tab completions
+	else:
+		set tab completions to {allPlayers::*}
 
 #Day Timers
 on tab complete for "/checkdaytimer":
