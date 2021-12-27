@@ -30,6 +30,7 @@ command /kissCounter [<player>]:
 			
 # MarriageCounter ------------------------------------------------------------------
 command /playermarried [<player>]: #place this command inside of OnMarry:[] in the marriageMaster config file | this command shouldnt be used by players
+	executable by: console
 	trigger:
 		if arg-1 is set:
 			add 1 to {counter::%arg-1%::marriage}
@@ -37,6 +38,7 @@ command /playermarried [<player>]: #place this command inside of OnMarry:[] in t
 			add 1 to {counter::%player%::marriage}
 
 command /marriageCounter [<player>]:
+	executable by: console
 	trigger:
 		if arg-1 is set:
 			if {counter::%arg-1%::marriage} is set:
