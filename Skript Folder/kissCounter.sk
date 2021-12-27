@@ -45,11 +45,10 @@ command /marriageCounter [<player>]:
 				send "&e%arg-1% has been married %{counter::%arg-1%::marriage}% time(s)!" to player
 			else:
 				send "&e%arg-1% hasn't been married yet!"
+		else if {counter::%player%::marriage} is set:
+			send "&eYou have been married %{counter::%player%::marriage}% time(s)!" to player
 		else:
-			if {counter::%player%::marriage} is set:
-				send "&eYou have been married %{counter::%player%::marriage}% time(s)!" to player
-			else:
-				send "&eYou haven't married anyone yet!"
+			send "&eYou haven't married anyone yet!"
 
 # divorceCounter ------------------------------------------------------------------
 command /playerdivorced [<player>]: #place this command inside of OnDivorce:[] in the marriageMaster config file
@@ -66,8 +65,7 @@ command /divorceCounter [<player>]:
 				send "&e%arg-1% has been divorced %{counter::%arg-1%::divorce}% time(s)!" to player
 			else:
 				send "&e%arg-1% hasn't been divorced yet!"
+		else if {counter::%player%::divorce} is set:
+			send "&eYou have been divorced %{counter::%player%::divorce}% time(s)!" to player
 		else:
-			if {counter::%player%::divorce} is set:
-				send "&eYou have been divorced %{counter::%player%::divorce}% time(s)!" to player
-			else:
-				send "&eYou haven't divorced anyone yet!"
+			send "&eYou haven't divorced anyone yet!"

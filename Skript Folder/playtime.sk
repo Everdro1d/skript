@@ -10,17 +10,16 @@ command /playtime [<offlineplayer>]:
 		if arg-1 is not set:
 			set {_playtime} to time played of player
 			set {_prefix} to "You have played for"
-		else:
-			#can the player see the playtime of another player
-			if player has permission "playtime.other":
-				if player is offline:
-					set {_playtime} to {allPlayers::%arg-1%::playtime}
-				else:
-					set {_playtime} to time played of arg-1
-				set {_prefix} to "%arg-1% has played for"
+		else if player has permission "playtime.other":
+		#can the player see the playtime of another player
+			if player is offline:
+				set {_playtime} to {allPlayers::%arg-1%::playtime}
 			else:
-				#if not then send permission message
-				send "&cYou don't have permission to use that!" to player
-				stop
+				set {_playtime} to time played of arg-1
+			set {_prefix} to "%arg-1% has played for"
+		else:
+			#if not then send permission message
+			send "&cYou don't have permission to use that!" to player
+			stop
 		#send the message
 		send "&6%{_prefix}% %{_playtime}%."
