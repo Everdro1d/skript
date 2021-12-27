@@ -71,7 +71,7 @@ Queue a command to execute when a player joins
 * Permissions to allow queuing commands
 #### Dependencies:
 [Optional]
-* Playtime script (Offline player functionality)
+* Player List script (Offline player functionality)
 * Tab completer script (Allows auto-completing where applicable)
 
 ---
