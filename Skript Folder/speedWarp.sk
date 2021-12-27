@@ -1,11 +1,41 @@
 # WIP - assign a number to a /home to speed up going there
-# <set | remove | (num)> <home name> <ID>
+# <set | del | ID> < set: home name | del: ID > <ID>
+#
+# ADD ERRORS FOR WHEN OTHER ARGS ARE NOT SET ie /speedwarp del ------ nada
+# ADD A LIST COMMAND
+# ADD AN ALIAS
+# FIX USAGE
+# IDK OTHER STUFF
+variables:
+	#change this number to the maximum amount of links you want to allow
+	{maxLinkedHomes} = 5
+
 command /speedwarp <string> [<string>] [<integer>]:
-	usage:
 	trigger:
 		if arg-1 is "set":
-			
+			#link the home
+			#if ID is grater than max, stop
+			if arg-3 is greater than {maxLinkedHomes}:
+				send "&cYou have reached the maximum number of linked homes! If you want to add more please delete a different one."
+				stop
+			#check if link already exists if so then stop
+			else if {speedWarp::%player%::%arg-3%} is set:
+				send "&cYou already have a home linked with that ID! Please choose another, or delete the current one to change it."
+				stop
+			#set the speedwarp & notify
+			set {speedWarp::%player%::%arg-3%} to arg-2
+			send "&6Successfully linked home: &c%arg-2%&6 with SpeedWarp ID: &c%arg-3%&6."
 		else if arg-1 is "del":
-			
+			#delete the link
+			if arg-2 parsed as number is number:
+				set {_homeName} to {speedWarp::%player%::%arg-2%}
+				send "&6Your home, &c%{_homeName}%&6, was unlinked from ID: &c%arg-2%&6."
+				delete {speedWarp::%player%::%arg-2%}
 		else if arg-1 parsed as a number is a number:
-		
+			if arg-1 parsed as a number is less than or equal to {maxLinkedHomes}:
+				#go to the home
+				set {_homeName} to {speedWarp::%player%::%arg-1%}
+				make player execute command "/home %{_homeName}%"
+		else:
+			send "&cValid arguments are < set | del | (1-%{maxLinkedHomes}%) >"
+			
