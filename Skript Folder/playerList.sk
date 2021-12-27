@@ -1,0 +1,37 @@
+#creates a list of online players and adds them when they join
+#creates a list of all joined players
+on join:
+	set {onlinePlayers::%player%} to "%player%"
+	set {allPlayers::%player%} to "%player%"
+#removes players from the online players list when they leave
+on quit:
+	if {onlinePlayers::%player%} is set:
+		delete {onlinePlayers::%player%}
+	else:
+		broadcast "Something went wrong. Please contact a server admin."
+
+#Debug commands (un)comment them as needed
+command /listOnline:
+	trigger:
+		loop {onlinePlayers::*}:
+			if {_list} is not set:
+				set {_list} to loop-value
+			else:
+				set {_list} to "&c%{_list}%&6, &c%loop-value%"
+		send "&6Online Players: %{_list}%&6."
+
+command /listAll:
+	trigger:
+		loop {allPlayers::*}:
+			if {_list} is not set:
+				set {_list} to loop-value
+			else:
+				set {_list} to " &c%{_list}%&6, &c%loop-value%"
+		send "&6All Players: %{_list}%&6."
+		
+# command /resetOnline:
+	# trigger:
+		# delete {onlinePlayers::*}
+# command /resetAll:
+	# trigger:
+		# delete {allPlayers::*}

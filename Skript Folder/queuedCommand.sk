@@ -23,7 +23,7 @@ on join:
 
 
 # make a command execute on a player join (as console or as player)
-command /executeonjoin <string> <offlineplayer> <string>:
+command /executeonjoin <string> <offline player> <string>:
 	permission: dro1d.op
 	usage: &e/executeonjoin &7Execute by player or console: &e<player | console> &7Execute for: &e<playerName> &7Command to execute: &e<command>
 	trigger:
@@ -55,7 +55,7 @@ command /executeonjoin <string> <offlineplayer> <string>:
 		send "&6to execute as %arg-1% with ID of %{_size}%"
 
 #shows the player a list of all queued commands for the chosen player 
-command /listonjoincommands <offlineplayer>:
+command /listonjoincommands <offline player>:
 	permission: dro1d.op
 	usage: /listonjoincommands Execute for: <playerName>
 	trigger:
@@ -85,7 +85,7 @@ command /listonjoincommands <offlineplayer>:
 			send "&6Queued Commands: %{_listCmds}%"
 
 #deletes a queued command based on the ID
-command /delonjoincommand <string> <offlineplayer> <integer> [<string>]:
+command /delonjoincommand <string> <offline player> <integer> [<string>]:
 	permission: dro1d.op
 	usage: /delonjoincommand <player | console> Execute for: <playerName> The ID of the cmd: <cmdNum>
 	trigger:

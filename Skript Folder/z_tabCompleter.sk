@@ -1,0 +1,40 @@
+
+on tab complete for "/restartTimer":
+	set tab completions to "[Time in Minutes]
+
+#playtime Skript Tab Completions
+on tab complete for "/playtime":
+	if player has permission "playtime.other":
+		#allow it
+	else:
+		clear tab completions
+
+#Day Timers
+on tab complete for "/checkdaytimer":
+	set tab completions to "[NONE]"
+	loop {targetDay::%player%::*}:
+		add loop-index to tab completions
+
+on tab complete for "/deltimer":
+	set tab completions to "[NONE]"
+	loop {targetDay::%player%::*}:
+		add loop-index to tab completions
+
+on tab complete for "/gettargetday":
+	set tab completions for position 1 to {allPlayers::*}
+	set {_player} to tab arg-1 parsed as player
+	set tab completions for position 2 to "[NO TIMERS]"
+	loop {targetDay::%{_player}%::*}:
+		add loop-index to tab completions for position 2
+		
+
+#Queued Commands
+on tab complete for "/executeonjoin":
+	set tab completions for position 1 to "player" and "console"
+	set tab completions for position 2 to {allPlayers::*}
+	set tab completions for position 3 to "give %player% dirt 1"
+on tab complete for "/delonjoincommand":
+	set tab completions for position 1 to "player" and "console"
+	set tab completions for position 2 to {allPlayers::*}
+on tab complete for "/listonjoincommands":
+	set tab completions for position 1 to {allPlayers::*}

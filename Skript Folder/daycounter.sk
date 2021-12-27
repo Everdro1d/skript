@@ -53,12 +53,12 @@ command /resetDay:
 # Day timer --------------------
 #
 # admin debug command
-command /getTargetDay <string>:
+command /getTargetDay <offline player> <string>:
 	permission: dayCounter.print
-	usage: /getTargetDay <nameOfTimer>
+	usage: /gettargetday <playerName> <nameOfTimer>
 	executable by: player
 	trigger:
-		send "&c%{targetDay::%player%::%arg-1%}%"
+		send "&c%{targetDay::%arg-1%::%arg-2%}%"
 
 #command to create a new timer
 command /setdaytimer <integer> <string>:
@@ -114,11 +114,11 @@ command /listTimers:
 		loop {targetDay::%player%::*}:
 			#first timer gets added to the list
 			if {_listTimers} is not set:
-				set {_listTimers} to loop-index
+				set {_listTimers} to "&c%loop-index%"
 			#any timers after first get added to the list
 			else:
 				#"existingtimer1, (adds the current loop timer here)"
-				set {_listTimers} to "%{_listTimers}%, %loop-index%"
+				set {_listTimers} to "&c%{_listTimers}%&6, &c%loop-index%"
 		#if the list still has nothing in it after the loop notify the player they have no active timers
 		if {_listTimers} is not set:
 			send "&cYou have no active timers!"
