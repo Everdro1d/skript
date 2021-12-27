@@ -1,7 +1,7 @@
 # /map command sends a link to the server map to the player
 options:
 	# change the following to the link of your map
-	link: http://bsi.mc-srv.com:8888/
+	link: http://map.serverip.com:1234/
 
 command /map:
 	trigger:
