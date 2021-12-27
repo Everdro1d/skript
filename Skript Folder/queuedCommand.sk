@@ -12,14 +12,14 @@ on join:
 			#makes the player execute the command
 			make player execute command {_cmd}
 			#removes the command from the list
-			make player execute command "/delonjoincommand player %player% %loop-value% -s"
+			make console execute command "delonjoincommand player %player% %loop-value%"
 	
 	#executes the queued command by the console when the player joins (sub-notes are same as above but for console instead of player)
 	if {onJoin::console::%player%::*} is set:
 		loop size of {onJoin::console::%player%::*} times:
 			set {_cmd} to {onJoin::console::%player%::%loop-value%}
 			make console execute command {_cmd}
-			make console execute command "/delonjoincommand console %player% %loop-value% -s"
+			make console execute command "delonjoincommand console %player% %loop-value%"
 
 
 # make a command execute on a player join (as console or as player)
@@ -64,18 +64,18 @@ command /listonjoincommands <offline player>:
 		loop {onJoin::player::%arg-1%::*}:
 			if {_listCmds} is not set:
 				#first queued commands gets added to the list
-				set {_listCmds} to "ID: %loop-index% (&e/%loop-value%&6)"
+				set {_listCmds} to "&6ID: &c%loop-index%&6, Category: &cplayer&6, (&e/%loop-value%&6)"
 			else:
 				#any queued commands after first get added to the list
-				set {_listCmds} to "%{_listCmds}%, ID: %loop-index% (&e/%loop-value%&6)"
+				set {_listCmds} to "%{_listCmds}%&6, ID: &c%loop-index%&6, Category: &cplayer&6, (&e/%loop-value%&6)"
 		#loops executable by console
 		loop {onJoin::console::%arg-1%::*}:
 			if {_listCmds} is not set:
 				#first queued commands gets added to the list
-				set {_listCmds} to "ID: %loop-index% (&e/%loop-value%&6)"
+				set {_listCmds} to "&6ID: &c%loop-index%&6, Category: &cconsole&6, (&e/%loop-value%&6)"
 			else:
 				#any queued commands after first get added to the list
-				set {_listCmds} to "%{_listCmds}%, ID: %loop-index% (&e/%loop-value%&6)"
+				set {_listCmds} to "%{_listCmds}%&6, ID: &c%loop-index%&6, Category: &cconsole&6, (&e/%loop-value%&6)"
 		#if the list still has nothing in it after the loop notify the player they have no queued commands
 		if {_listCmds} is not set:
 			send "&cYou have no queued commands!"
@@ -88,7 +88,6 @@ command /listonjoincommands <offline player>:
 command /delonjoincommand <string> <offline player> <integer> [<string>]:
 	permission: dro1d.op
 	usage: /delonjoincommand <player | console> Execute for: <playerName> The ID of the cmd: <cmdNum>
-	executable by: player
 	trigger:
 		#checks if the queued command exists if so run delete code, else notify the player it doesn't exist
 		if {onJoin::%arg-1%::%arg-2%::%arg-3%} is set:
