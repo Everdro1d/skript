@@ -12,14 +12,14 @@ on join:
 			#makes the player execute the command
 			make player execute command {_cmd}
 			#removes the command from the list
-			make console execute command "delonjoincommand player %player% %loop-value%"
+			make console execute command "delonjoincommand player %player% %loop-value% -s"
 	
 	#executes the queued command by the console when the player joins (sub-notes are same as above but for console instead of player)
 	if {onJoin::console::%player%::*} is set:
 		loop size of {onJoin::console::%player%::*} times:
 			set {_cmd} to {onJoin::console::%player%::%loop-value%}
 			make console execute command {_cmd}
-			make console execute command "delonjoincommand console %player% %loop-value%"
+			make console execute command "delonjoincommand console %player% %loop-value% -s"
 
 
 # make a command execute on a player join (as console or as player)
