@@ -1,19 +1,23 @@
 # WIP - assign a number to a /home to speed up going there
-# <set | del | ID> < set: home name | del: ID > <ID>
+# <set | del | list | ID> < set: home name | del: ID > <ID>
 #
-# ADD ERRORS FOR WHEN OTHER ARGS ARE NOT SET ie /speedwarp del ------ nada
-# ADD A LIST COMMAND
-# ADD AN ALIAS
-# FIX USAGE
-# IDK OTHER STUFF
+#planned: 
+# - [LOW] | Add home names for auto-complete
 variables:
 	#change this number to the maximum amount of links you want to allow
 	{maxLinkedHomes} = 5
 
-command /speedwarp <string> [<string>] [<integer>]:
+command /speedwarp [<string>] [<string>] [<integer>]:
+	aliases: /sw
 	trigger:
 		if arg-1 is "set":
 			#link the home
+			if arg-2 is not set:
+				send "&cPlease enter a valid Home!"
+				stop
+			if arg-3 is not set:
+				send "&cPlease select a valid ID!"
+				stop
 			#if ID is grater than max, stop
 			if arg-3 is greater than {maxLinkedHomes}:
 				send "&cYou have reached the maximum number of linked homes! If you want to add more please delete a different one."
@@ -24,18 +28,55 @@ command /speedwarp <string> [<string>] [<integer>]:
 				stop
 			#set the speedwarp & notify
 			set {speedWarp::%player%::%arg-3%} to arg-2
+			#error if <none>
+			if {speedWarp::%player%::%arg-3%} is not set:
+				send "&cPlease enter a valid home!"
+				delete {speedWarp::%player%::%arg-3%}
+				stop
 			send "&6Successfully linked home: &c%arg-2%&6 with SpeedWarp ID: &c%arg-3%&6."
+		#
+		#
 		else if arg-1 is "del":
 			#delete the link
-			if arg-2 parsed as number is number:
+			if arg-2 is not set:
+				send "&cPlease enter a valid ID!"
+				stop
+			else if arg-2 parsed as number is number:
 				set {_homeName} to {speedWarp::%player%::%arg-2%}
+				if {_homeName} is not set:
+					send "&cYou dont have a home linked to that ID!"
+					stop
 				send "&6Your home, &c%{_homeName}%&6, was unlinked from ID: &c%arg-2%&6."
 				delete {speedWarp::%player%::%arg-2%}
+			else:
+				send "&cPlease enter a valid ID!"
+		#
+		#
+		else if arg-1 is "list":
+			#list all homes
+			loop {speedWarp::%player%::*}:
+				if {_listMsg} is not set:
+					#first link gets added
+					set {_listMsg} to "&7ID: &c%loop-index%&7, Linked Home: &c%loop-value%"
+				else:
+					#any links after the first get added
+					set {_listMsg} to "%{_listMsg}%&6, &7ID: &c%loop-index%&7, Linked Home: &c%loop-value%"
+			if {_listMsg} is not set:
+				send "&cYou have no linked SpeedWarps!"
+				stop
+			else:
+				#send the message with the list of queued commands
+				send "&6Linked SpeedWarps: %{_listMsg}%"
+		#
+		#
 		else if arg-1 parsed as a number is a number:
 			if arg-1 parsed as a number is less than or equal to {maxLinkedHomes}:
 				#go to the home
 				set {_homeName} to {speedWarp::%player%::%arg-1%}
 				make player execute command "/home %{_homeName}%"
 		else:
-			send "&cValid arguments are < set | del | (1-%{maxLinkedHomes}%) >"
-			
+			send "&cValid arguments are < set | del | list | (1-%{maxLinkedHomes}%) >"
+
+# command /sw [<string>] [<string>] [<integer>]:
+	# trigger:
+		# make player execute command "/speedwarp %arg-1% %arg-2% %arg-3%"

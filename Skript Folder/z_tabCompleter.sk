@@ -1,6 +1,6 @@
-
+#restartTimer
 on tab complete for "/restartTimer":
-	set tab completions to "[Time in Minutes]
+	set tab completions to "[Time in Minutes]"
 
 #playtime Skript Tab Completions
 on tab complete for "/playtime":
@@ -27,6 +27,35 @@ on tab complete for "/gettargetday":
 	loop {targetDay::%{_player}%::*}:
 		add loop-index to tab completions for position 2
 		
+#speedWarp
+on tab complete for "/speedWarp":
+	set tab completions for position 1 to "set", "del", "list" and "(1-%{maxLinkedHomes}%)"
+	if tab arg-1 is "set":
+		set tab completions for position 2 to "[HomeName]"
+		if tab arg-2 is set:
+			loop {maxLinkedHomes} times:
+				add loop-value to {_loopList::*}
+			set tab completions for position 3 to {_loopList::*}
+	else if tab arg-1 is "del":
+		loop {maxLinkedHomes} times:
+			add loop-value to {_loopList1::*}
+		set tab completions for position 2 to {_loopList1::*}
+	else if tab arg-1 is "list":
+		clear tab completions
+on tab complete for "/sw":
+	set tab completions for position 1 to "set", "del", "list" and "(1-%{maxLinkedHomes}%)"
+	if tab arg-1 is "set":
+		set tab completions for position 2 to "[HomeName]"
+		if tab arg-2 is set:
+			loop {maxLinkedHomes} times:
+				add loop-value to {_loopList::*}
+			set tab completions for position 3 to {_loopList::*}
+	else if tab arg-1 is "del":
+		loop {maxLinkedHomes} times:
+			add loop-value to {_loopList1::*}
+		set tab completions for position 2 to {_loopList1::*}
+	else if tab arg-1 is "list":
+		clear tab completions
 
 #Queued Commands
 on tab complete for "/executeonjoin":
