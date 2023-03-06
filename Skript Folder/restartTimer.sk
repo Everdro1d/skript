@@ -12,6 +12,10 @@ every 1 irl minute:
 	if {totalMins} is not -1:
 		remove 1 from {totalMins}
 
+#auto restart 24 hours
+every 1 irl day:
+	execute console command "restarttimer 30"
+
 #checks if there is an active timer or not
 command /checkrestart:
 	permission: bukkit.command.restart
